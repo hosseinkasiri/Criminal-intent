@@ -5,7 +5,4 @@
     android:layout_height="match_parent"
     tools:context=".CrimeListFragment"
     android:id="@+id/crime_recycler_view">
-
-
-
 </androidx.recyclerview.widget.RecyclerView>

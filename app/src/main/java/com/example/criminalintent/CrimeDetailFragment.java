@@ -32,10 +32,7 @@ public class CrimeDetailFragment extends Fragment {
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
     private static final String mArgsId = "ARGS ID";
-
-    public CrimeDetailFragment() {
-        // Required empty public constructor
-    }
+    private static final String mDIALOG_TAG = "dialog tag";
 
     public static CrimeDetailFragment newInstance(UUID id) {
 
@@ -50,27 +47,26 @@ public class CrimeDetailFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UUID crimeId = (UUID) getArguments().getSerializable(mArgsId);
-
         mCrime = CrimeLab.getInstance().getCrime(crimeId);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
 
         View view =inflater.inflate(R.layout.fragment_crime, container, false);
 
-        mTitleField = view.findViewById(R.id.edit_txt);
-        mDateButton = view.findViewById(R.id.first_btn);
-        mSolvedCheckBox = view.findViewById(R.id.crime_solved);
-
+        findViews(view);
         mTitleField.setText(mCrime.getTitle());
         mDateButton.setText(mCrime.getDate().toString());
         mSolvedCheckBox.setChecked(mCrime.isSolved());
-
-        mDateButton.setEnabled(false);
-
+        mDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerFragment datePickerFragment = DatePickerFragment.newInstance();
+                datePickerFragment.show(getFragmentManager(),mDIALOG_TAG);
+            }
+        });
         mTitleField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -83,10 +79,8 @@ public class CrimeDetailFragment extends Fragment {
 
             @Override
             public void afterTextChanged(Editable s) {
-
             }
         });
-
         mSolvedCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -94,5 +88,11 @@ public class CrimeDetailFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    private void findViews(View view) {
+        mTitleField = view.findViewById(R.id.edit_txt);
+        mDateButton = view.findViewById(R.id.first_btn);
+        mSolvedCheckBox = view.findViewById(R.id.crime_solved);
     }
 }
