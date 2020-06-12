@@ -1,5 +1,6 @@
 package com.example.criminalintent;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import com.example.models.Crime;
 import com.example.models.CrimeLab;
 
+import java.util.Date;
 import java.util.UUID;
 
 
@@ -31,8 +33,8 @@ public class CrimeDetailFragment extends Fragment {
     private EditText mTitleField;
     private Button mDateButton;
     private CheckBox mSolvedCheckBox;
-    private static final String mArgsId = "ARGS ID";
-    private static final String mDIALOG_TAG = "dialog tag";
+    private static final String mArgsId = "ARGS ID",mDIALOG_TAG = "dialog tag";
+    private static final int mREQ_CODE = 0;
 
     public static CrimeDetailFragment newInstance(UUID id) {
 
@@ -63,7 +65,8 @@ public class CrimeDetailFragment extends Fragment {
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerFragment datePickerFragment = DatePickerFragment.newInstance();
+                DatePickerFragment datePickerFragment = DatePickerFragment.newInstance(mCrime.getDate());
+                datePickerFragment.setTargetFragment(CrimeDetailFragment.this , mREQ_CODE);
                 datePickerFragment.show(getFragmentManager(),mDIALOG_TAG);
             }
         });
@@ -88,6 +91,26 @@ public class CrimeDetailFragment extends Fragment {
             }
         });
         return view;
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode != mREQ_CODE){
+            return;
+        }
+        if (requestCode == mREQ_CODE){
+            Date date = (Date) data.getSerializableExtra(DatePickerFragment.getArgDate());
+            mCrime.setDate(date);
+            mDateButton.setText(date.toString());
+        }
+
+
+
+
+
+
+
     }
 
     private void findViews(View view) {
