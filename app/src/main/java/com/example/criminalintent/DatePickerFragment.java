@@ -27,7 +27,6 @@ public class DatePickerFragment extends DialogFragment {
     private static final String ARG_DATE = "com.example.criminalintent_date";
     private Date mDate;
     private DatePicker mDatePicker;
-
     public static String getArgDate() {
         return ARG_DATE;
     }
