@@ -4,11 +4,16 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -38,6 +43,13 @@ public class CrimeListFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -50,19 +62,48 @@ public class CrimeListFragment extends Fragment {
     }
 
     @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_crime_list,menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()){
+            case R.id.new_crime:
+                Crime crime = new Crime();
+                CrimeLab.getInstance().addCrime(crime);
+                Intent intent = CrimePagerActivity.newIntent(getActivity(),crime.getId());
+                startActivity(intent);
+                return true;
+
+            case R.id.show_subtitle:
+                int crimeCount = CrimeLab.getInstance().getCrimes().size();
+                String subtitle = getString(R.string.subtitle_format
+                ,String.valueOf(crimeCount));
+                AppCompatActivity activity = (AppCompatActivity) getActivity();
+                activity.getSupportActionBar().setSubtitle(subtitle);
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         updateUi();
     }
 
     private void updateUi() {
+        CrimeLab crimeLab = CrimeLab.getInstance();
+        List<Crime> crimes = crimeLab.getCrimes();
         if (mCrimeAdapter == null) {
-            CrimeLab crimeLab = CrimeLab.getInstance();
-            List<Crime> crimes = crimeLab.getCrimes();
             mCrimeAdapter = new CrimeAdapter(crimes);
             mRecyclerView.setAdapter(mCrimeAdapter);
         }
         else {
+           // mCrimeAdapter.setCrimes(crimes);
             mCrimeAdapter.notifyDataSetChanged();
         }
     }
@@ -98,6 +139,9 @@ public class CrimeListFragment extends Fragment {
     private class CrimeAdapter extends RecyclerView.Adapter<CrimeHolder>{
         private List<Crime> mCrimes;
         public CrimeAdapter(List<Crime> crimes) {
+            mCrimes = crimes;
+        }
+        public void setCrimes(List<Crime> crimes) {
             mCrimes = crimes;
         }
 

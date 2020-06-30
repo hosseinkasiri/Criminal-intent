@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:layout_margin="15dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Date of crime"
+        android:textSize="25dp"/>
+
+    <DatePicker
+        android:id="@+id/date_date_picker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/done_Button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="done"
+            android:layout_gravity="bottom|right"
+            android:textSize="25dp"
+            android:textColor="@color/colorOfText"/>
+</LinearLayout>

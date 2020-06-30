@@ -7,6 +7,7 @@ import android.os.Bundle;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.telephony.TelephonyManager;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -59,9 +60,7 @@ public class CrimeDetailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
         View view =inflater.inflate(R.layout.fragment_crime, container, false);
-
         findViews(view);
         mTitleField.setText(mCrime.getTitle());
         mDateButton.setText(mCrime.getDate().toString());
@@ -71,9 +70,9 @@ public class CrimeDetailFragment extends Fragment {
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePickerFragment datePickerFragment = DatePickerFragment.newInstance(mCrime.getDate());
-                datePickerFragment.setTargetFragment(CrimeDetailFragment.this , mREQ_CODE);
-                datePickerFragment.show(getFragmentManager(),mDIALOG_TAG);
+                    DatePickerFragment datePickerFragment = DatePickerFragment.newInstance(mCrime.getDate());
+                    datePickerFragment.setTargetFragment(CrimeDetailFragment.this, mREQ_CODE);
+                    datePickerFragment.show(getFragmentManager(), mDIALOG_TAG);
             }
         });
         mTimeButton.setOnClickListener(new View.OnClickListener() {
@@ -125,16 +124,25 @@ public class CrimeDetailFragment extends Fragment {
             mDateButton.setText(date.toString());
         }
         if (requestCode == mREQ_CODE_time){
-            Date date = (Date) data.getSerializableExtra("hour");
+            Date date = (Date) data.getSerializableExtra(TimePickerFragment.getArgDate());
             mCrime.setDate(date);
             mTimeButton.setText(getTime());
         }
     }
-
+    
     private void findViews(View view) {
         mTitleField = view.findViewById(R.id.edit_txt);
         mDateButton = view.findViewById(R.id.date_button);
         mSolvedCheckBox = view.findViewById(R.id.crime_solved);
         mTimeButton = view.findViewById(R.id.time_button);
+    }
+
+    private boolean phoneOrTablet(){
+        TelephonyManager manager = (TelephonyManager) getActivity().getSystemService(getActivity().TELEPHONY_SERVICE);
+        if (manager.getPhoneType()==TelephonyManager.PHONE_TYPE_NONE){
+            return true;
+        }
+        else
+            return false;
     }
 }

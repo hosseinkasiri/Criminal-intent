@@ -7,15 +7,13 @@ import java.util.UUID;
 
 public class CrimeLab {
 
-    private LinkedHashMap<UUID , Crime> mCrimes ;
+    private List<Crime> mCrimes ;
 
     private static CrimeLab instance ;
 
     private CrimeLab(){
-
-        mCrimes = new LinkedHashMap();
-
-        for (int i = 0 ; i < 100 ; i++){
+        mCrimes = new ArrayList<>();
+       /* for (int i = 0 ; i < 100 ; i++){
 
             Crime crime = new Crime();
             crime.setTitle("Crime#" + i);
@@ -24,8 +22,7 @@ public class CrimeLab {
 
             mCrimes.put(crime.getId() , crime);
 
-        }
-
+        }*/
     }
 
     public static CrimeLab getInstance(){
@@ -37,13 +34,15 @@ public class CrimeLab {
     }
 
     public List<Crime> getCrimes() {
-        return new  ArrayList<>(mCrimes.values());
+        return mCrimes;
     }
 
     public Crime getCrime(UUID id){
-
-
-        return (Crime) mCrimes.get(id);
+        for (Crime crime : mCrimes){
+            if (crime.getId().equals(id))
+                return crime;
+        }
+        return null;
     }
 
     public int item (UUID id){
@@ -56,5 +55,9 @@ public class CrimeLab {
             }
         }
         return -1;
+    }
+
+    public void addCrime(Crime crime){
+        mCrimes.add(crime);
     }
 }

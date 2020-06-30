@@ -10,12 +10,13 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.TextView;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -27,6 +28,7 @@ public class DatePickerFragment extends DialogFragment {
     private static final String ARG_DATE = "com.example.criminalintent_date";
     private Date mDate;
     private DatePicker mDatePicker;
+    private Button mDoneButton;
     public static String getArgDate() {
         return ARG_DATE;
     }
@@ -65,12 +67,15 @@ public class DatePickerFragment extends DialogFragment {
                         int month = mDatePicker.getMonth();
                         int day = mDatePicker.getDayOfMonth();
                         Date date = new GregorianCalendar(year,month,day).getTime();
-                        Intent intent = new Intent();
-                        intent.putExtra(ARG_DATE,date);
-                        getTargetFragment().onActivityResult(getTargetRequestCode(),Activity.RESULT_OK,intent);
+                        setResult(date);
                     }
                 })
                 .setView(view)
                 .create();
+    }
+    private void setResult(Date date){
+        Intent intent = new Intent();
+        intent.putExtra(ARG_DATE,date);
+        getTargetFragment().onActivityResult(getTargetRequestCode(),Activity.RESULT_OK,intent);
     }
 }

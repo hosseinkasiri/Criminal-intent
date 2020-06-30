@@ -1,6 +1,7 @@
 package com.example.criminalintent;
 
 import android.os.Bundle;
+import android.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -16,7 +17,6 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         FragmentManager fragmentManager = getSupportFragmentManager();
-
         Fragment fragment = createFragment();
         if (fragmentManager.findFragmentById(R.id.fragment_container) == null){
 
