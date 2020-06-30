@@ -30,8 +30,10 @@ import java.util.List;
  */
 public class CrimeListFragment extends Fragment {
 
+    private static final String VISIBLE_SUBTITLE = "visible_subtitle";
     private RecyclerView mRecyclerView;
     private CrimeAdapter mCrimeAdapter;
+    private boolean mIsSubtitleVisible;
 
     public CrimeListFragment() {
         // Required empty public constructor
@@ -46,6 +48,9 @@ public class CrimeListFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null)
+            mIsSubtitleVisible = savedInstanceState.getBoolean(VISIBLE_SUBTITLE);
+
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
@@ -65,6 +70,8 @@ public class CrimeListFragment extends Fragment {
     public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         inflater.inflate(R.menu.fragment_crime_list,menu);
+        MenuItem item = menu.findItem(R.id.show_subtitle);
+        item.setTitle(mIsSubtitleVisible ? R.string.hide_subtitle : R.string.show_subtitle);
     }
 
     @Override
@@ -78,21 +85,38 @@ public class CrimeListFragment extends Fragment {
                 return true;
 
             case R.id.show_subtitle:
-                int crimeCount = CrimeLab.getInstance().getCrimes().size();
-                String subtitle = getString(R.string.subtitle_format
-                ,String.valueOf(crimeCount));
-                AppCompatActivity activity = (AppCompatActivity) getActivity();
-                activity.getSupportActionBar().setSubtitle(subtitle);
+                mIsSubtitleVisible = ! mIsSubtitleVisible;
+                getActivity().invalidateOptionsMenu();
+                updateSubtitle();
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
 
     }
 
+    private void updateSubtitle() {
+        int crimeCount = CrimeLab.getInstance().getCrimes().size();
+        String subtitle = getString(R.string.subtitle_format,crimeCount);
+
+        if (!mIsSubtitleVisible)
+            subtitle = null;
+
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.getSupportActionBar().setSubtitle(subtitle);
+    }
+
     @Override
     public void onResume() {
         super.onResume();
         updateUi();
+        updateSubtitle();
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putBoolean(VISIBLE_SUBTITLE,mIsSubtitleVisible);
     }
 
     private void updateUi() {
