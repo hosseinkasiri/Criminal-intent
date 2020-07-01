@@ -49,7 +49,6 @@ public class CrimeLab {
 
         List<Crime> crimes = getCrimes();
         for (int i = 0 ; i < crimes.size() ; i++) {
-
             if (crimes.get(i).getId().equals(id)) {
                 return i;
             }
@@ -59,5 +58,9 @@ public class CrimeLab {
 
     public void addCrime(Crime crime){
         mCrimes.add(crime);
+    }
+
+    public void deleteCrime(Crime crime){
+        mCrimes.remove(crime);
     }
 }
