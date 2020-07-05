@@ -21,8 +21,6 @@ import java.util.UUID;
 public class CrimePagerActivity extends AppCompatActivity {
 
     private static final int CRIMES_FIRST_INDEX = 0;
-
-
     private ViewPager mViewPager;
     private List<Crime> mCrimes;
     private static String sEXTRA_id = "com.example.criminalintent.EXTRA ID";
@@ -30,25 +28,17 @@ public class CrimePagerActivity extends AppCompatActivity {
     private Button mFirstButton;
 
     public static Intent newIntent(Context context , UUID crimeId){
-
         Intent intent = new Intent(context , CrimePagerActivity.class);
-
         intent.putExtra(sEXTRA_id , crimeId);
-
         return intent;
-
     }
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pager);
 
         mViewPager = findViewById(R.id.view_pager_activity);
-
-        mCrimes = CrimeLab.getInstance().getCrimes();
-
+        mCrimes = CrimeLab.getInstance(this).getCrimes();
         mLastButton = findViewById(R.id.last_btn);
         mFirstButton = findViewById(R.id.first_btn);
 
@@ -68,10 +58,13 @@ public class CrimePagerActivity extends AppCompatActivity {
             }
         });
 
+        for (int i = 0; i < mCrimes.size(); i++){
+            if (mCrimes.get(i).getId().equals(mCrimeId))
+                mViewPager.setCurrentItem(i);
+        }
+        mViewPager.setOffscreenPageLimit(5);
 
-        mViewPager.setCurrentItem(CrimeLab.getInstance().item(mCrimeId));
-
-        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+       /* mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
 
@@ -79,51 +72,34 @@ public class CrimePagerActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-
                 if (position == mCrimes.size()-1)
                     mLastButton.setVisibility(View.GONE);
-
                 else
                     mLastButton.setVisibility(View.VISIBLE);
-
                 if (position == CRIMES_FIRST_INDEX)
                     mFirstButton.setVisibility(View.GONE);
-
                 else
                     mFirstButton.setVisibility(View.VISIBLE);
-
             }
-
             @Override
             public void onPageScrollStateChanged(int state) {
-
-
             }
         });
-
-        mLastButton.setOnClickListener(new View.OnClickListener() {
+       mLastButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 mViewPager.setCurrentItem(mCrimes.size()-1);
-
-
-
-
             }
         });
 
-        mFirstButton.setOnClickListener(new View.OnClickListener() {
+       /* mFirstButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (CrimeLab.getInstance().item(mCrimeId) == 0)
+                if (CrimeLab.getInstance(CrimePagerActivity.this).item(mCrimeId) == 0)
                     mFirstButton.setVisibility(View.GONE);
-
-
                 mViewPager.setCurrentItem(0);
             }
-        });
+        });*/
 
     }
 }

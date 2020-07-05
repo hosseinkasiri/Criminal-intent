@@ -55,7 +55,7 @@ public class CrimeDetailFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         UUID crimeId = (UUID) getArguments().getSerializable(mArgsId);
-        mCrime = CrimeLab.getInstance().getCrime(crimeId);
+        mCrime = CrimeLab.getInstance(getActivity()).getCrime(crimeId);
         setHasOptionsMenu(true);
     }
 
@@ -119,7 +119,7 @@ public class CrimeDetailFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.delete_crime:
-                CrimeLab.getInstance().deleteCrime(mCrime);
+                CrimeLab.getInstance(getActivity()).deleteCrime(mCrime);
                 getActivity().finish();
                 return true;
             default:
@@ -149,7 +149,13 @@ public class CrimeDetailFragment extends Fragment {
             mTimeButton.setText(getTime());
         }
     }
-    
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        CrimeLab.getInstance(getActivity()).update(mCrime);
+    }
+
     private void findViews(View view) {
         mTitleField = view.findViewById(R.id.edit_txt);
         mDateButton = view.findViewById(R.id.date_button);

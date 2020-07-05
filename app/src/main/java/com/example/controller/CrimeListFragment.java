@@ -79,11 +79,10 @@ public class CrimeListFragment extends Fragment {
         switch (item.getItemId()){
             case R.id.new_crime:
                 Crime crime = new Crime();
-                CrimeLab.getInstance().addCrime(crime);
+                CrimeLab.getInstance(getActivity()).addCrime(crime);
                 Intent intent = CrimePagerActivity.newIntent(getActivity(),crime.getId());
                 startActivity(intent);
                 return true;
-
             case R.id.show_subtitle:
                 mIsSubtitleVisible = ! mIsSubtitleVisible;
                 getActivity().invalidateOptionsMenu();
@@ -92,11 +91,10 @@ public class CrimeListFragment extends Fragment {
             default:
                 return super.onOptionsItemSelected(item);
         }
-
     }
 
     private void updateSubtitle() {
-        int crimeCount = CrimeLab.getInstance().getCrimes().size();
+        int crimeCount = CrimeLab.getInstance(getActivity()).getCrimes().size();
         String subtitle = getResources().getQuantityString(R.plurals.subtitle_plural,crimeCount , crimeCount);
 
         if (!mIsSubtitleVisible)
@@ -120,14 +118,14 @@ public class CrimeListFragment extends Fragment {
     }
 
     private void updateUi() {
-        CrimeLab crimeLab = CrimeLab.getInstance();
+        CrimeLab crimeLab = CrimeLab.getInstance(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
         if (mCrimeAdapter == null) {
             mCrimeAdapter = new CrimeAdapter(crimes);
             mRecyclerView.setAdapter(mCrimeAdapter);
         }
         else {
-           // mCrimeAdapter.setCrimes(crimes);
+            mCrimeAdapter.setCrimes(crimes);
             mCrimeAdapter.notifyDataSetChanged();
         }
     }
@@ -150,7 +148,7 @@ public class CrimeListFragment extends Fragment {
             mCrime = crime;
             mTitleTextView.setText(crime.getTitle());
             mDateTextView.setText(crime.getDate().toString());
-            mPoliceImage.setVisibility(crime.isSolved() == true ? View.VISIBLE : View.GONE);
+            mPoliceImage.setVisibility(crime.isSolved() ? View.VISIBLE : View.GONE);
         }
 
         @Override

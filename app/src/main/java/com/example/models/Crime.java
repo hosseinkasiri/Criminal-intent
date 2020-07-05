@@ -1,6 +1,7 @@
 package com.example.models;
 
 import java.util.Date;
+import java.util.Random;
 import java.util.UUID;
 
 public class Crime {
@@ -10,10 +11,16 @@ public class Crime {
     private Date mDate;
     private boolean mSolved;
 
+    public Crime() {
+        this(UUID.randomUUID());
+    }
+    public Crime(UUID id){
+        mId = id;
+        mDate = new Date();
+    }
     public UUID getId() {
         return mId;
     }
-
     public String getTitle() {
         return mTitle;
     }
@@ -36,11 +43,5 @@ public class Crime {
 
     public void setSolved(boolean solved) {
         mSolved = solved;
-    }
-
-    public Crime() {
-
-        mId = UUID.randomUUID();
-        mDate = new Date();
     }
 }
