@@ -9,8 +9,8 @@ import com.example.database.CrimeBaseHelper;
 import com.example.database.CrimeCursorWrapper;
 import com.example.database.CrimeDbSchema;
 
+import java.io.File;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -101,6 +101,13 @@ public class CrimeLab {
         values.put(CrimeDbSchema.CrimeTable.Cols.TITLE, crime.getTitle());
         values.put(CrimeDbSchema.CrimeTable.Cols.DATE, crime.getDate().toString());
         values.put(CrimeDbSchema.CrimeTable.Cols.SOLVED, crime.isSolved());
+        values.put(CrimeDbSchema.CrimeTable.Cols.SUSPECT,crime.getSuspect());
         return values;
+    }
+
+    public File getPhotoFile(Crime crime){
+        File fileDir = mContext.getFilesDir();
+        File photoFile = new File(fileDir,crime.getPhotoName());
+        return photoFile;
     }
 }
