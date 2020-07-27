@@ -3,6 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.controller">
 
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false"/>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,10 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.example.controller.DatePickerActivity"
-            android:parentActivityName="com.example.controller.CrimeListActivity"></activity>
         <activity android:name="com.example.controller.CrimePagerActivity" />
-        <activity android:name="com.example.controller.CrimeDetailActivity" />
         <activity android:name="com.example.controller.CrimeListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,5 +1,6 @@
 package com.example.controller;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
@@ -34,9 +35,29 @@ public class CrimeListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private CrimeAdapter mCrimeAdapter;
     private boolean mIsSubtitleVisible;
+    private Callbacks mCallbacks;
+
+    public interface Callbacks{
+        void onCrimeSelected(Crime crime);
+    }
 
     public CrimeListFragment() {
         // Required empty public constructor
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof Callbacks)
+            mCallbacks = (Callbacks)context;
+        else
+            throw new RuntimeException("Callbacks not implement");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
     }
 
     public static CrimeListFragment newInstance() {
@@ -80,8 +101,9 @@ public class CrimeListFragment extends Fragment {
             case R.id.new_crime:
                 Crime crime = new Crime();
                 CrimeLab.getInstance(getActivity()).addCrime(crime);
-                Intent intent = CrimePagerActivity.newIntent(getActivity(),crime.getId());
-                startActivity(intent);
+                mCallbacks.onCrimeSelected(crime);
+                updateUi();
+                updateSubtitle();
                 return true;
             case R.id.show_subtitle:
                 mIsSubtitleVisible = ! mIsSubtitleVisible;
@@ -117,7 +139,7 @@ public class CrimeListFragment extends Fragment {
         outState.putBoolean(VISIBLE_SUBTITLE,mIsSubtitleVisible);
     }
 
-    private void updateUi() {
+    public void updateUi() {
         CrimeLab crimeLab = CrimeLab.getInstance(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
         if (mCrimeAdapter == null) {
@@ -153,8 +175,7 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View v) {
-            Intent intent = CrimePagerActivity.newIntent(getActivity() , mCrime.getId());
-            startActivity(intent);
+            mCallbacks.onCrimeSelected(mCrime);
         }
     }
 

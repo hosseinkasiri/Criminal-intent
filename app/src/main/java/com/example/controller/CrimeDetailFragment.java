@@ -1,5 +1,7 @@
 package com.example.controller;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -10,6 +12,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.ShareCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 
@@ -60,7 +63,11 @@ public class CrimeDetailFragment extends Fragment {
     private Button mSuspectButton,mReportButton;
     private ImageView mPhotoView;
     private ImageButton mPhotoButton;
+    private Callbacks mCallbacks;
 
+    public interface Callbacks{
+        void onCrimeUpdate();
+    }
 
     public static CrimeDetailFragment newInstance(UUID id) {
         Bundle args = new Bundle();
@@ -68,6 +75,21 @@ public class CrimeDetailFragment extends Fragment {
         CrimeDetailFragment fragment = new CrimeDetailFragment();
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof Callbacks)
+            mCallbacks = (Callbacks) context;
+        else
+            throw new RuntimeException("Activity not implement callbacks");
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mCallbacks = null;
     }
 
     @Override
@@ -92,6 +114,11 @@ public class CrimeDetailFragment extends Fragment {
         handelTitle();
         handelSolvedCheckBox();
         updatePhotoView();
+        handelPhotoView();
+        return view;
+    }
+
+    private void handelPhotoView() {
         mPhotoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -99,7 +126,6 @@ public class CrimeDetailFragment extends Fragment {
                 dialogCrimeViewFragment.show(getFragmentManager(),TAG_PHOTO);
             }
         });
-        return view;
     }
 
     private void handelTimeButton() {
@@ -185,6 +211,7 @@ public class CrimeDetailFragment extends Fragment {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 mCrime.setSolved(isChecked);
+                onCrimeUpdate();
             }
         });
     }
@@ -198,6 +225,7 @@ public class CrimeDetailFragment extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 mCrime.setTitle(s.toString());
+                onCrimeUpdate();
             }
             @Override
             public void afterTextChanged(Editable s) {
@@ -244,11 +272,13 @@ public class CrimeDetailFragment extends Fragment {
             Date date = (Date) data.getSerializableExtra(DatePickerFragment.getArgDate());
             mCrime.setDate(date);
             mDateButton.setText(date.toString());
+            onCrimeUpdate();
         }
         if (requestCode == REQ_CODE_TIME){
             Date date = (Date) data.getSerializableExtra(TimePickerFragment.getArgDate());
             mCrime.setDate(date);
             mTimeButton.setText(getTime());
+            onCrimeUpdate();
         }
         else if (requestCode == REQ_CONTACT){
             Uri contactUri = data.getData();
@@ -270,6 +300,7 @@ public class CrimeDetailFragment extends Fragment {
                 String suspect = cursor.getString(cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
                 mCrime.setSuspect(suspect);
                 mSuspectButton.setText(suspect);
+                onCrimeUpdate();
 
             } finally {
                 cursor.close();
@@ -299,15 +330,6 @@ public class CrimeDetailFragment extends Fragment {
         mPhotoButton = view.findViewById(R.id.crime_camera);
     }
 
-    private boolean phoneOrTablet(){
-        TelephonyManager manager = (TelephonyManager) getActivity().getSystemService(getActivity().TELEPHONY_SERVICE);
-        if (manager.getPhoneType()==TelephonyManager.PHONE_TYPE_NONE){
-            return true;
-        }
-        else
-            return false;
-    }
-
     private String getCrimeReport(){
         String report = null;
         String dateString = new SimpleDateFormat("yyyy/MM/dd").format(mCrime.getDate());
@@ -327,5 +349,10 @@ public class CrimeDetailFragment extends Fragment {
             Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(),getActivity());
             mPhotoView.setImageBitmap(bitmap);
         }
+    }
+
+    private void onCrimeUpdate(){
+        CrimeLab.getInstance(getActivity()).update(mCrime);
+        mCallbacks.onCrimeUpdate();
     }
 }

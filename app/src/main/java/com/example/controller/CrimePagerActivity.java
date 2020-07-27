@@ -18,7 +18,7 @@ import com.example.models.CrimeLab;
 import java.util.List;
 import java.util.UUID;
 
-public class CrimePagerActivity extends AppCompatActivity {
+public class CrimePagerActivity extends AppCompatActivity implements CrimeDetailFragment.Callbacks {
 
     private static final int CRIMES_FIRST_INDEX = 0;
     private ViewPager mViewPager;
@@ -101,5 +101,10 @@ public class CrimePagerActivity extends AppCompatActivity {
             }
         });*/
 
+    }
+
+    @Override
+    public void onCrimeUpdate() {
+        //nothing
     }
 }

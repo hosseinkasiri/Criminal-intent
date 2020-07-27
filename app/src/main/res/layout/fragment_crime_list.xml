@@ -6,5 +6,4 @@
     tools:context=".CrimeListFragment"
     android:id="@+id/crime_recycler_view">
 
-
 </androidx.recyclerview.widget.RecyclerView>
