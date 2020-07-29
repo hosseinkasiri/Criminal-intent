@@ -67,6 +67,7 @@ public class CrimeDetailFragment extends Fragment {
 
     public interface Callbacks{
         void onCrimeUpdate();
+        void deleteCrime(Crime crime);
     }
 
     public static CrimeDetailFragment newInstance(UUID id) {
@@ -249,8 +250,7 @@ public class CrimeDetailFragment extends Fragment {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()){
             case R.id.delete_crime:
-                CrimeLab.getInstance(getActivity()).deleteCrime(mCrime);
-                getActivity().finish();
+                mCallbacks.deleteCrime(mCrime);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

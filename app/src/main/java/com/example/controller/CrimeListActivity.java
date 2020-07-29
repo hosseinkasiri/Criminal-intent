@@ -40,4 +40,9 @@ public class CrimeListActivity extends SingleFragmentActivity implements CrimeLi
                 findFragmentById(R.id.fragment_list_container);
         crimeListFragment.updateUi();
     }
+
+    @Override
+    public void deleteCrime(Crime crime) {
+
+    }
 }

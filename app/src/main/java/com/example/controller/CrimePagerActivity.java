@@ -107,4 +107,19 @@ public class CrimePagerActivity extends AppCompatActivity implements CrimeDetail
     public void onCrimeUpdate() {
         //nothing
     }
+
+    @Override
+    public void deleteCrime(Crime crime) {
+        if (findViewById(R.id.fragment_detail_container) == null) {
+            //phone
+            CrimeLab.getInstance(this).deleteCrime(crime);
+            finish();
+        }else {
+            //tablet
+            CrimeLab.getInstance(this).deleteCrime(crime);
+            CrimeListFragment crimeListFragment = (CrimeListFragment) getSupportFragmentManager().
+                    findFragmentById(R.id.fragment_list_container);
+            crimeListFragment.updateUi();
+        }
+    }
 }
